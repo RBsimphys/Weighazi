@@ -1,0 +1,27 @@
+{
+  "name": "weighjazi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RBsimphys/Weighazi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RBsimphys/Weighazi/issues"
+  },
+  "homepage": "https://github.com/RBsimphys/Weighazi#readme",
+  "dependencies": {
+    "live-server": "^1.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
