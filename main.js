@@ -30,7 +30,7 @@ userArray.push(new User(
 ));
 
 userArray.push(new User(
-    "Mahdi Joudah   ",
+    "Mahdi Joudah",
     140,
     [120]
 ));
