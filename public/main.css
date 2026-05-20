@@ -1,0 +1,702 @@
+@font-face {
+    font-family: 'monoton';
+    src: url('/fonts/monoton/Monoton-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'ubuntu-bold';
+    src: url('/fonts/ubuntu/ubuntu-font-family-0.80/Ubuntu-B.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'ubuntu-reg';
+    src: url('/fonts/ubuntu/ubuntu-font-family-0.80/Ubuntu-R.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    background: black;
+    min-height: 100vh;
+    padding: 20px 12px;
+    position: relative;
+}
+
+/* Fullscreen shader background */
+
+#bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    display: block;
+}
+
+/* White leaderboard card */
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 40px rgba(0, 0, 0, 0.35);
+    position: relative;
+}
+
+/* title */
+
+.title {
+    padding: 3px;
+    text-align: center;
+    font-size: 60px;
+    font-weight: bold;
+    font-family: 'monoton';
+    color: white;
+    background: transparent;
+}
+
+/* rows */
+
+.table-header,
+.user-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    align-items: center;
+    font-size: 22px;
+    color: black;
+    gap: 6px;
+    justify-content: center;
+    padding: 6px 10px;
+}
+
+.table-header {
+    background: #f3f4f6;
+    font-weight: bold;
+    font-family: 'ubuntu-bold';
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: 25px;
+    color: #3a3a3a;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.user-row {
+    border-bottom: 1px solid #eee;
+    font-family: 'ubuntu-reg';
+}
+
+.user-row:hover {
+    background-color: #fff5cb;
+}
+
+.user-row:last-child {
+    border-bottom: none;
+}
+
+.table-header>*,
+.user-row>* {
+    text-align: center;
+}
+
+/* progress ring */
+
+.circle-progress {
+    --size: 60px;
+    --thickness: 5px;
+    --progress: 0;
+
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: conic-gradient(#ecc31e calc(var(--progress) * 1%),
+            #e5e7eb 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+}
+
+.circle-inner {
+    width: calc(var(--size) - var(--thickness) * 2);
+    height: calc(var(--size) - var(--thickness) * 2);
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* ── Mobile ── */
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px 6px;
+    }
+
+    .title {
+        font-size: 28px;
+        padding: 10px 4px;
+    }
+
+    .table-header,
+    .user-row {
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        font-size: 13px;
+        gap: 3px;
+        padding: 6px;
+    }
+
+    .table-header {
+        font-size: 13px;
+    }
+
+    .circle-progress {
+        --size: 38px;
+        --thickness: 4px;
+    }
+
+    .circle-inner {
+        font-size: 10px;
+    }
+}
+
+/* TV animation */
+#bg {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+#bg.tv-off {
+    animation: tvOff 0.4s forwards;
+}
+
+@keyframes tvOff {
+    0% {
+        transform: scaleY(1) scaleX(1);
+        filter: brightness(1);
+    }
+
+    20% {
+        transform: scaleY(0.08) scaleX(1.02);
+        filter: brightness(2);
+    }
+
+
+    30% {
+        transform: scaleY(0.02) scaleX(0.5);
+        filter: brightness(4);
+    }
+
+    60% {
+        transform: scaleY(0.01) scaleX(0.08);
+        filter: brightness(6);
+    }
+
+    100% {
+        transform: scaleY(0) scaleX(0);
+        filter: brightness(0);
+    }
+}
+
+#bg.tv-off {
+    animation: tvOff 0.3s ease-in-out forwards;
+}
+
+@keyframes tvOn {
+    0% {
+        transform: scaleY(0) scaleX(0);
+        filter: brightness(0);
+    }
+
+    30% {
+        transform: scaleY(0.01) scaleX(0.3);
+        filter: brightness(5);
+    }
+
+    60% {
+        transform: scaleY(0.01) scaleX(1.02);
+        filter: brightness(3);
+    }
+
+    100% {
+        transform: scaleY(1);
+        filter: brightness(1);
+    }
+}
+
+#bg.tv-on {
+    animation: tvOn 0.4s forwards;
+}
+
+
+#bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    display: block;
+
+    /* start hidden so there's no flash before tv-on runs */
+    transform: scaleY(0) scaleX(0);
+    filter: brightness(0);
+}
+
+/* ── user page layout ── */
+.user-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ── top card: name + ring + maintenance ── */
+.top-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 40px rgba(0, 0, 0, 0.35);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.top-card .user-name {
+    font-family: 'ubuntu-bold';
+    font-size: 28px;
+    color: #1a1a1a;
+}
+
+.top-card .user-sub {
+    font-family: 'ubuntu-reg';
+    font-size: 14px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* maintenance calories badge */
+.maintenance-badge {
+    text-align: center;
+}
+
+.maintenance-badge .cal-number {
+    font-family: 'ubuntu-bold';
+    font-size: 26px;
+    color: #ecc31e;
+    line-height: 1;
+}
+
+.maintenance-badge .cal-label {
+    font-family: 'ubuntu-reg';
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* progress ring — reuse existing .circle-progress but bigger here */
+.ring-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ring-wrap .ring-label {
+    font-family: 'ubuntu-reg';
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.circle-progress-lg {
+    --size: 80px;
+    --thickness: 8px;
+    --progress: 0;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: conic-gradient(#ecc31e calc(var(--progress) * 1%),
+            #e5e7eb 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle-progress-lg .circle-inner {
+    width: calc(var(--size) - var(--thickness) * 2);
+    height: calc(var(--size) - var(--thickness) * 2);
+    font-size: 15px;
+}
+
+/* ── weight log card ── */
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 40px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+
+.log-card {
+    max-height: 190px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.card-header h3 {
+    font-family: 'ubuntu-bold';
+    font-size: 20px;
+    color: #3a3a3a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+#add-weight {
+    font-size: 13px;
+    margin: 10px;
+    padding: 10px;
+    border: solid black;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn {
+    font-family: 'ubuntu-bold';
+    font-size: 13px;
+    margin: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.96);
+}
+
+.btn-add {
+    background: #ecc31e;
+    color: #1a1a1a;
+}
+
+.btn-undo {
+    background: #f3f4f6;
+    color: #555;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+/* add weight form (hidden by default) */
+.add-form {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.add-form.open {
+    display: flex;
+}
+
+.add-form input {
+    font-family: 'ubuntu-reg';
+    font-size: 14px;
+    padding: 6px 10px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 7px;
+    width: 120px;
+    outline: none;
+}
+
+.add-form input:focus {
+    border-color: #ecc31e;
+}
+
+.btn-confirm {
+    background: #1a1a1a;
+    color: white;
+}
+
+/* log list */
+.log-entry {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 9px 18px;
+    font-family: 'ubuntu-reg';
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f3f4f6;
+    align-items: center;
+}
+
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+.log-entry .log-date {
+    color: #888;
+    font-size: 13px;
+}
+
+.log-entry .log-weight {
+    font-family: 'ubuntu-bold';
+}
+
+.log-entry .log-delta {
+    text-align: right;
+    font-size: 13px;
+}
+
+.log-entry .log-delta.down {
+    color: #22c55e;
+}
+
+.log-entry .log-delta.up {
+    color: #ef4444;
+}
+
+.log-entry .log-delta.same {
+    color: #aaa;
+}
+
+.log-empty {
+    padding: 24px;
+    text-align: center;
+    font-family: 'ubuntu-reg';
+    font-size: 14px;
+    color: #bbb;
+}
+
+/* chart card */
+.chart-wrap {
+    padding: 16px 18px 18px;
+}
+
+/* form card */
+.form-card {
+    padding: 20px 24px;
+}
+
+.form-card h3 {
+    font-family: 'ubuntu-bold';
+    font-size: 15px;
+    color: #3a3a3a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+}
+
+.form-group label {
+    font-family: 'ubuntu-bold';
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-group input {
+    font-family: 'ubuntu-reg';
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 7px;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #ecc31e;
+}
+
+.btn-submit-full {
+    margin-top: 14px;
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    background: #ecc31e;
+    color: #1a1a1a;
+    border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    .top-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .top-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .user-name {
+        font-size: 22px;
+    }
+}
+
+
+
+
+.profile-card {
+    position: relative;
+    /* Allows absolute positioning of children */
+    z-index: 1;
+    /* Establishes a new stacking context */
+    overflow: hidden;
+    /* Prevents canvas from leaking past rounded corners */
+    padding: 24px;
+    /* Adds space around your text content */
+    border-radius: 12px;
+    /* Optional: rounds the card corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Optional: adds depth */
+}
+
+.profile-card {
+    background: #000;
+    color: #dfdfdf;
+    padding: 2rem;
+    max-width: 900px;
+}
+
+.profile-card h3 {
+    color: #666;
+    font-size: 25px;
+    letter-spacing: 0.2rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 17px;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    margin-bottom: 4px;
+}
+
+.form-group p {
+    margin: 0;
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.log-list {
+    max-height: 120px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 18px;
+    font-family: 'ubuntu-reg';
+    scrollbar-width: thin;
+    scrollbar-color: #6a6a6a transparent;
+}
+
+.log-list::-webkit-scrollbar {
+    width: 1px;
+}
+
+.log-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.log-list::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 999px;
+}
+
+.log-item {
+    color: #bdbdbd;
+    font-size: 15px;
+    display: flex;
+    width: 20%;
+    justify-content: space-between;
+    padding: 0 8px;
+    align-self: center;
+}
+
+
+/* 2. Background Canvas */
+#profile-bg {
+    position: absolute;
+    /* Pulls canvas out of document flow */
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Stretches to match card width */
+    height: 100%;
+    /* Stretches to match card height */
+    z-index: -1;
+    /* Forces canvas behind text elements */
+    pointer-events: none;
+    /* Allows user to click elements "through" canvas */
+}

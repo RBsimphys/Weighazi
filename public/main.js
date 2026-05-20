@@ -1,47 +1,27 @@
-const userArray = [];
+document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('bg');
 
+    canvas.classList.add('tv-on');
 
-userArray.push(new User(
-    "Ahmad Hijazi",
-    150,
-    [120]
-));
+    function navigateWithTvOff(url) {
+        canvas.classList.remove('tv-on');
+        canvas.classList.add('tv-off');
+        setTimeout(() => {
+            window.location.href = url;
+        }, 300);
+    }
 
-userArray.push(new User(
-    "Lina Hijazi",
-    165,
-    [120]
-));
+    document.querySelectorAll('.user-row').forEach(row => {
+        row.addEventListener('click', function () {
+            navigateWithTvOff('/user/' + this.dataset.id);
+        });
+    });
 
-userArray.push(new User(
-    "Mohammad Hijazi",
-    140,
-    [120]
-));
-userArray.push(new User(
-    "Sulieman Barakat",
-    140,
-    [120]
-));
-userArray.push(new User(
-    "Rami Barakat",
-    140,
-    [120]
-));
-
-userArray.push(new User(
-    "Mahdi Joudah",
-    140,
-    [120]
-));
-userArray.push(new User(
-    "Ben Barani",
-    140,
-    [120]
-));
-const container = document.querySelector(".container");
-
-userArray.forEach(user => {
-    container.appendChild(user.render());
+    const homeBtn = document.getElementById('homeBtn');
+    if (homeBtn) {
+        homeBtn.addEventListener('click', () => {
+            navigateWithTvOff('/');
+        });
+    }
 });
 

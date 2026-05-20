@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weighjazi — <%= user.id %></title>
+    <link rel="stylesheet" href="/main.css">
+
+</head>
+
+<body>
+    <h2 class="title" id="homeBtn" href="/">weighjazi</h2>
+    <div class="user-container">
+
+        <!-- ── top card ── -->
+        <div class="top-card">
+            <div>
+                <div class="user-name" id="displayName">
+                    <%= user.name %> #<%= user.id %>
+                </div>
+                <div class="user-sub">Weight tracking dashboard</div>
+            </div>
+
+            <div class="top-right">
+                <!-- maintenance calories -->
+                <div class="maintenance-badge">
+                    <div class="cal-number" id="maintCals">—</div>
+                    <div class="cal-label">Maintenance kcal</div>
+                </div>
+
+                <!-- progress ring -->
+                <div class="ring-wrap">
+                    <div class="circle-progress-lg" id="progressRing"
+                        style="--progress: <%=Math.round(Number(user.progress))%>;">
+                        <div class="circle-inner" id="progressText"><%=Math.round(Number(user.progress))%>%</div>
+                    </div>
+                    <span class="ring-label">Goal</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── weight log card ── -->
+        <div class="card log-card">
+            <div class="card-header">
+                <h3>Weight Log</h3>
+            </div>
+
+            <form class="btn-row" id="add-form">
+                <button class="btn btn-add" type="submit">Add +</button>
+                <input placeholder="current weight" step="0.01" type="number" name="add-weight" id="add-weight">
+            </form>
+
+            <div class="log-list" id="logList">
+                <% if (logs.length === 0) { %>
+                <div class="log-empty" id="logEmpty">
+                    No entries yet — add your first weight above.
+                </div>
+                <% } else { %>
+                <% logs.forEach(log => { %>
+                <div class="log-item">
+                    <span><%= log.weight %> lbs</span>
+                    <span><%= new Date(log.logged_at).toLocaleDateString() %></span>
+                    <a
+                        href="/user/<%= user.name %>/delete/<%= log.id %>"><%- include("../public/icons/trash.svg") %></a>
+                </div>
+                <% }) %>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- ── chart card ── -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Progress Chart</h3>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="weightChart" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- ── profile / goal form card ── -->
+        <div class="profile-card" id="profile-card">
+
+            <canvas id="profile-bg"></canvas>
+
+            <h3>Profile</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <p><%= user.name %></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Weight (lbs)</label>
+                    <p id="currentWeight"><%= user.currentweight %></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Goal Weight (lbs)</label>
+                    <p><%= user.goalweight %></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Starting Weight (lbs)</label>
+                    <p><%= user.startingweight %></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Height (inches)</label>
+                    <p><%= user.height %></p>
+                </div>
+
+                <div class="form-group">
+                    <label>Age</label>
+                    <p><%= user.age %></p>
+                </div>
+            </div>
+        </div>
+        <input type="checkbox" name="sms-consent" id="sms-consent" required>
+        <label id="sms-consent-label" for="sms-consent">
+            I agree to receive SMS notifications from WeighJazi
+        </label>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/weightForm.js"></script>
+    <script src="/shader2.js"></script>
+</body>
+
+</html>

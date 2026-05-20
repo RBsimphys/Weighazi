@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/main.css">
+
+</head>
+
+<body>
+    <canvas id="bg"></canvas>
+    <h2 class="title">weighjazi</h2>
+
+
+    <div class="container">
+        <div class="table-header">
+            <span>Competitor</span>
+            <span>Weight</span>
+            <span>Goal</span>
+            <span>Progress</span>
+        </div>
+
+        <% for(let i = 0; i < userArray.length;i++){ %>
+        <div class="user-row" data-id="<%=userArray[i].id  %>">
+            <span><%= userArray[i].name %></span>
+            <span><%= userArray[i].current_weight%> lbs</span>
+            <span><%= userArray[i].goalweight %> lbs</span>
+            <div class="circle-progress" style="--progress: <%= Math.round(Number(userArray[i].progress))%>;">
+                <div class="circle-inner" step="0">
+                    <%= Math.round(Number(userArray[i].progress))%>%
+                </div>
+            </div>
+        </div>
+        <%}%>
+
+                <script src="/main.js"></script>
+                <script src="/shader.js"></script>
+
+        </div>
+        
+</body>
+
+</html>
