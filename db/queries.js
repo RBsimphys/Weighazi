@@ -115,7 +115,7 @@ async function getWeightList(id) {
     SELECT id, weight, logged_at
     FROM weightlogs
     WHERE user_id = $1
-    ORDER BY logged_at ASC;
+    ORDER BY logged_at;
     `,
         [id]
     );
@@ -125,12 +125,10 @@ async function getWeightList(id) {
 
 async function deleteWeight(userid, weightid) {
     const { rows } = await pool.query(
-        `DELETE FROM weight_logs
-         WHERE id = $1 AND user_id = $2
-         RETURNING *`,
+        `DELETE FROM weightlogs
+         WHERE id = $1 AND user_id = $2`,
         [weightid, userid]
     );
-    return rows[0];
 }
 
 

@@ -61,37 +61,10 @@
             <!-- RIGHT / BLACK -->
             <div class="log-list-wrap">
 
-                <canvas class="shader-bg" id="log-bg"></canvas>
-
                 <div class="log-list" id="logList">
-
-                    <% if (logs.length === 0) { %>
-
-                    <div class="log-empty" id="logEmpty">
-                        No entries yet — add your first weight above.
-                    </div>
-
-                    <% } else { %>
-
-                    <% logs.forEach(log => { %>
-
-                    <div class="log-item">
-                        <span><%= log.weight %> lbs</span>
-
-                        <span>
-                            <%= new Date(log.logged_at).toLocaleDateString() %>
-                        </span>
-
-                        <a href="/user/<%= user.name %>/delete/<%= log.id %>">
-                            <%- include("../public/icons/trash.svg") %>
-                        </a>
-                    </div>
-
-                    <% }) %>
-
-                    <% } %>
-
+                    <div class="log-list" id="logList"></div>
                 </div>
+
             </div>
         </div>
 
@@ -133,7 +106,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Height (inches)</label>
+                    <label>Height (meters)</label>
                     <p><%= user.height %></p>
                 </div>
 

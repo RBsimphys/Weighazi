@@ -35,11 +35,11 @@ app.get('/user/:id', async (req, res) => {
 });
 
 
-app.delete('/user/:id/delete/:weightid', async (req, res) => {
-    const id = req.params.id;
-    const weightid = req.params.weightid; // was req.params.id
+app.delete('/user/delete/:id/:weightid', async (req, res) => {
+    const { id, weightid } = req.params;
     const deleted = await queries.deleteWeight(id, weightid);
-    res.json(deleted); // was console.log(logs)
+
+    res.json({ success: true, deleted });
 });
 
 
@@ -49,6 +49,10 @@ app.get('/user/:id/logs', async (req, res) => {
     res.json(logs);
 });
 
+app.get('/api/user/:id', async (req, res) => {
+    const user = await queries.getUser(req.params.id);
+    res.json(user);
+});
 
 app.post('/user/:id', async (req, res) => {
     const id = req.params.id;

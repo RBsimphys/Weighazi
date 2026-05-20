@@ -1,117 +1,236 @@
-const canvas2 = document.getElementById('profile-bg');
-const homeBtn = document.getElementById('homeBtn');
+const userId = window.location.pathname.split('/')[2];
 const addWeightForm = document.getElementById('add-form');
+const homeBtn = document.getElementById('homeBtn');
+const currentWeightEl = document.getElementById('currentWeight');
+const progressRingEl = document.getElementById('progressRing');
+const progressTextEl = document.getElementById('progressText');
+const logList = document.getElementById('logList');
 const weightChart = document.getElementById('weightChart');
+
 
 let chartInstance = null;
 
-if (homeBtn) {
-    homeBtn.addEventListener('click', () => {
-        window.location.href = '/';
-    });
+init();
+
+homeBtn.addEventListener('click', () => {
+    window.location.href = '/';
+});
+
+addWeightForm.addEventListener('submit', handleAddWeight);
+
+async function handleAddWeight(e) {
+    e.preventDefault();
+
+    const input = document.getElementById('add-weight');
+    const weight = input.value.trim();
+
+    if (!weight) return;
+
+    try {
+        const res = await fetch(`/user/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'add-weight': weight
+            })
+        });
+
+        const json = await res.json();
+
+        if (!json.success) return;
+
+        updateUI(json.user, json.logs);
+
+        input.value = '';
+
+    } catch (err) {
+        console.error(err);
+    }
 }
 
-if (addWeightForm) {
-    addWeightForm.addEventListener('submit', async (e) => {
+function updateUI(user, logs) {
+    updateUserData(user);
+    updateLogList(user, logs);
+    updateChart(logs);
+}
+
+function updateUserData(user) {
+
+    currentWeightEl.textContent = user.currentweight;
+
+    const progress = Math.round(Number(user.progress));
+
+    progressRingEl.style.setProperty(
+        '--progress',
+        progress
+    );
+
+    progressTextEl.textContent = `${progress}%`;
+}
+
+function updateLogList(user, logs) {
+
+    logList.replaceChildren();
+
+    [...logs]
+        .reverse()
+        .forEach(log => {
+
+            const item = createLogItem(user, log);
+
+            logList.appendChild(item);
+        });
+}
+
+function createLogItem(user, log) {
+
+
+
+    const item = document.createElement('div');
+    item.className = 'log-item';
+
+    const weight = document.createElement('span');
+    weight.textContent = `${log.weight} lbs`;
+
+    const date = document.createElement('span');
+    date.textContent =
+        new Date(log.logged_at).toLocaleDateString();
+
+    const deleteLink = document.createElement('a');
+    deleteLink.href = '#';
+    deleteLink.className = 'delete-link';
+
+    const img = document.createElement('img');
+    img.src = '/icons/trash2.svg';
+    img.alt = 'delete';
+    img.className = 'log-item-img';
+
+    deleteLink.appendChild(img);
+    deleteLink.addEventListener('click', async (e) => {
         e.preventDefault();
 
-        const input = document.querySelector('#add-weight');
-        const data = input.value;
-        const id = window.location.pathname.split('/')[2];
+        await deleteWeight(user.id, log.id);
 
-        if (!data) return;
-
-        if (typeof flashStart !== 'undefined') {
-            flashStart = performance.now();
-        }
-
-        try {
-            const res = await fetch(`/user/${id}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 'add-weight': data })
-            });
-
-            const json = await res.json();
-
-            if (json.success) {
-                const { user, logs } = json;
-
-                document.querySelector('#currentWeight').textContent = user.currentweight;
-
-                const progress = Math.round(Number(user.progress));
-                document.querySelector('#progressRing').style.setProperty('--progress', progress);
-                document.querySelector('#progressText').textContent = `${progress}%`;
-
-                const logList = document.querySelector('#logList');
-                const newestLog = logs[logs.length - 1];
-
-                logList.insertAdjacentHTML('afterbegin', `
-                    <div class="log-item">
-                        <span>${newestLog.weight} lbs</span>
-                        <span>${new Date(newestLog.logged_at).toLocaleDateString()}</span>
-                    </div>
-                `);
-
-                input.value = '';
-
-                await renderChart();
-            }
-
-        } catch (error) {
-            console.error('fetch error:', error);
-        }
+        await refreshPageData();
     });
+
+    item.append(
+        weight,
+        date,
+        deleteLink
+    );
+
+    return item;
+}
+
+async function deleteWeight(userId, logId) {
+
+    try {
+
+        await fetch(
+            `/user/delete/${userId}/${logId}`,
+            {
+                method: 'DELETE'
+            }
+        );
+
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 async function renderChart() {
-    if (!weightChart) return;
 
-    const id = window.location.pathname.split('/')[2];
-    const res = await fetch(`/user/${id}/logs`);
-    const json = await res.json();
+    const res = await fetch(`/user/${userId}/logs`);
 
-    const labels = json.map(e =>
-        new Date(e.logged_at).toLocaleDateString('en-GB', {
-            day: 'numeric',
-            month: 'short'
-        })
+    const logs = await res.json();
+
+    updateChart(logs);
+}
+
+function updateChart(logs) {
+
+    const labels = logs.map(log =>
+        new Date(log.logged_at).toLocaleDateString(
+            'en-GB',
+            {
+                day: 'numeric',
+                month: 'short'
+            }
+        )
     );
 
-    const weights = json.map(e => e.weight);
+    const weights = logs.map(log => log.weight);
 
     if (chartInstance) {
-        chartInstance.data.labels = labels;
-        chartInstance.data.datasets[0].data = weights;
-        chartInstance.update();
-        return;
+        chartInstance.destroy();
     }
 
     chartInstance = new Chart(weightChart, {
         type: 'line',
+
         data: {
             labels,
+
             datasets: [{
                 label: 'Weight (lbs)',
                 data: weights,
+
                 borderColor: '#ecc31e',
-                backgroundColor: 'rgba(236, 195, 30, 0.1)',
+                backgroundColor: 'rgba(236,195,30,0.1)',
+
                 tension: 0.3,
+
                 pointRadius: 4,
                 pointBackgroundColor: '#ecc31e'
             }]
         },
+
         options: {
             responsive: true,
-            animation: false,
+
             plugins: {
-                legend: { display: false }
+                legend: {
+                    display: false
+                }
             },
+
             scales: {
-                y: { beginAtZero: false }
+                y: {
+                    beginAtZero: false
+                }
             }
         }
     });
+}
+
+async function init() {
+
+    const res = await fetch(`/user/${userId}/logs`);
+
+    const logs = await res.json();
+
+    const userRes = await fetch(`/api/user/${userId}`);
+
+    const user = await userRes.json();
+
+    updateUI(user, logs);
+}
+
+
+async function refreshPageData() {
+
+    const [userRes, logsRes] = await Promise.all([
+        fetch(`/api/user/${userId}`),
+        fetch(`/user/${userId}/logs`)
+    ]);
+
+    const user = await userRes.json();
+    const logs = await logsRes.json();
+
+    updateUI(user, logs);
 }
 
 renderChart();

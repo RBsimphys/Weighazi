@@ -1,18 +1,21 @@
-const canvas = document.getElementById("profile-bg");
-const gl = canvas.getContext("webgl");
 
-canvas.width = canvas.clientWidth * 0.5;
-canvas.height = canvas.clientHeight * 0.5;
+function startShader(canvasid) {
 
-gl.viewport(0, 0, canvas.width, canvas.height);
-const vertexShaderSource = `
+    const canvas = document.getElementById(canvasid);
+    const gl = canvas.getContext("webgl");
+
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    const vertexShaderSource = `
 attribute vec2 position;
 
 void main() {
     gl_Position = vec4(position, 0.0, 1.0);
 }
 `;
-const fragmentShaderSource = `
+    const fragmentShaderSource = `
     precision highp float;
 
     uniform vec2 resolution;
@@ -24,14 +27,18 @@ const fragmentShaderSource = `
 
     vec4 originalShader(vec2 uv) {
         // base: dark grey/white monochrome, flashes to bright green
-        vec4 colour_2 = mix(vec4(0.1, 0.1, 0.1, 1.0), vec4(0.2, 0.7, 0.5, 1.0), flashTime);
+        vec4 colour_2 = mix(
+    vec4(0.06, 0.06, 0.03, 1.0),
+    vec4(0.07, 0.1, 0.09, 1.0),
+    flashTime
+);
 
         float len = length(uv);
 
         float angle = atan(uv.y, uv.x);
         angle += time * 0.2 - len * 1.2;
         uv = vec2(cos(angle), sin(angle)) * len;
-        uv *= 9.0;
+        uv *= 5.5;
 
         vec2 uv2 = uv;
 
@@ -59,72 +66,75 @@ const fragmentShaderSource = `
         gl_FragColor = vec4(clamp(col.rgb, 0.0, 1.0), 1.0);
     }
 `;
-function createShader(type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    return shader;
-}
-
-const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
-const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
-
-const program = gl.createProgram();
-gl.attachShader(program, vertexShader);
-gl.attachShader(program, fragmentShader);
-gl.linkProgram(program);
-gl.useProgram(program);
-
-const vertices = new Float32Array([
-    -1, -1,
-     1, -1,
-    -1,  1,
-     1,  1
-]);
-
-const buffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-const position = gl.getAttribLocation(program, "position");
-gl.enableVertexAttribArray(position);
-gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-
-const resolutionUniform = gl.getUniformLocation(program, "resolution");
-const timeUniform = gl.getUniformLocation(program, "time");
-const flashUniform = gl.getUniformLocation(program, "flashTime");
-
-let flashStart = null;
-const FLASH_DURATION = 5000;
-
-document.querySelector('.btn-add').addEventListener('click', () => {
-    flashStart = performance.now();
-});
-function render(t) {
-    let flash = 0.0;
-    if (flashStart !== null) {
-        const elapsed = performance.now() - flashStart;
-        if (elapsed < FLASH_DURATION) {
-            const p = elapsed / FLASH_DURATION;
-            // peak at 20% of duration, slow fade out for remaining 80%
-            flash = p < 0.1
-                ? p / 0.1                          // linear ramp up
-                : Math.pow(1 - (p - 0.1) / 0.8, 2); // ease out over the rest
-        } else {
-            flashStart = null;
-        }
+    function createShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
     }
 
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.uniform2f(resolutionUniform, canvas.width, canvas.height);
-    gl.uniform1f(timeUniform, t * 0.0004);
-    gl.uniform1f(flashUniform, flash);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(render);
-}
-requestAnimationFrame(render);
+    const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
 
-window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const vertices = new Float32Array([
+        -1, -1,
+        1, -1,
+        -1, 1,
+        1, 1
+    ]);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    const position = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+    const resolutionUniform = gl.getUniformLocation(program, "resolution");
+    const timeUniform = gl.getUniformLocation(program, "time");
+    const flashUniform = gl.getUniformLocation(program, "flashTime");
+
+    let flashStart = null;
+    const FLASH_DURATION = 5000;
+
+    document.querySelector('.btn-add').addEventListener('click', () => {
+        flashStart = performance.now();
+    });
+    function render(t) {
+        let flash = 0.0;
+        if (flashStart !== null) {
+            const elapsed = performance.now() - flashStart;
+            if (elapsed < FLASH_DURATION) {
+                const p = elapsed / FLASH_DURATION;
+                // peak at 20% of duration, slow fade out for remaining 80%
+                flash = p < 0.1
+                    ? p / 0.1                          // linear ramp up
+                    : Math.pow(1 - (p - 0.1) / 0.8, 2); // ease out over the rest
+            } else {
+                flashStart = null;
+            }
+        }
+
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.uniform2f(resolutionUniform, canvas.width, canvas.height);
+        gl.uniform1f(timeUniform, t * 0.00015);
+        gl.uniform1f(flashUniform, flash);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+    window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
+startShader("profile-bg");
+
