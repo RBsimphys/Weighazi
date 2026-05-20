@@ -1,31 +1,30 @@
-
 const canvas2 = document.getElementById('profile-bg');
-
 const homeBtn = document.getElementById('homeBtn');
-
-homeBtn.addEventListener('click', () => {
-    navigateWithTvOff('/');
-});
-
-function navigateWithTvOff(url) {
-    canvas.classList.remove('tv-on');
-    canvas.classList.add('tv-off');
-    setTimeout(() => {
-        window.location.href = url;
-    }, 300);
-}
-
 const addWeightForm = document.getElementById('add-form');
+const weightChart = document.getElementById('weightChart');
+
+let chartInstance = null;
+
+if (homeBtn) {
+    homeBtn.addEventListener('click', () => {
+        window.location.href = '/';
+    });
+}
 
 if (addWeightForm) {
     addWeightForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const input = document.querySelector('#add-weight');  // define input here
+
+        const input = document.querySelector('#add-weight');
         const data = input.value;
         const id = window.location.pathname.split('/')[2];
 
         if (!data) return;
-        flashStart = performance.now();
+
+        if (typeof flashStart !== 'undefined') {
+            flashStart = performance.now();
+        }
+
         try {
             const res = await fetch(`/user/${id}`, {
                 method: 'POST',
@@ -34,8 +33,6 @@ if (addWeightForm) {
             });
 
             const json = await res.json();
-            console.log(json); // check what's coming back
-
 
             if (json.success) {
                 const { user, logs } = json;
@@ -47,15 +44,18 @@ if (addWeightForm) {
                 document.querySelector('#progressText').textContent = `${progress}%`;
 
                 const logList = document.querySelector('#logList');
-                logList.innerHTML = logs.map(log => `
+                const newestLog = logs[logs.length - 1];
+
+                logList.insertAdjacentHTML('afterbegin', `
                     <div class="log-item">
-                        <span>${log.weight} lbs</span>
-                        <span>${new Date(log.logged_at).toLocaleDateString()}</span>
+                        <span>${newestLog.weight} lbs</span>
+                        <span>${new Date(newestLog.logged_at).toLocaleDateString()}</span>
                     </div>
-                `).join('');
+                `);
 
                 input.value = '';
-                renderChart();
+
+                await renderChart();
             }
 
         } catch (error) {
@@ -64,28 +64,33 @@ if (addWeightForm) {
     });
 }
 
-
-const weightChart = document.getElementById('weightChart');
-let chartInstance = null;
-
 async function renderChart() {
+    if (!weightChart) return;
 
     const id = window.location.pathname.split('/')[2];
     const res = await fetch(`/user/${id}/logs`);
     const json = await res.json();
 
-    const labels = json.map(e => new Date(e.logged_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }));
+    const labels = json.map(e =>
+        new Date(e.logged_at).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+        })
+    );
+
     const weights = json.map(e => e.weight);
 
-    if (chartInstance !== null) {
-        chartInstance.destroy();
-        chartInstance = null;
+    if (chartInstance) {
+        chartInstance.data.labels = labels;
+        chartInstance.data.datasets[0].data = weights;
+        chartInstance.update();
+        return;
     }
 
-    let cfg = {
+    chartInstance = new Chart(weightChart, {
         type: 'line',
         data: {
-            labels: labels,
+            labels,
             datasets: [{
                 label: 'Weight (lbs)',
                 data: weights,
@@ -98,6 +103,7 @@ async function renderChart() {
         },
         options: {
             responsive: true,
+            animation: false,
             plugins: {
                 legend: { display: false }
             },
@@ -105,11 +111,7 @@ async function renderChart() {
                 y: { beginAtZero: false }
             }
         }
-    };
-
-
-
-    chartInstance = new Chart(weightChart, cfg);
+    });
 }
 
 renderChart();

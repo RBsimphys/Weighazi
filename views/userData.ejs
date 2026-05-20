@@ -41,31 +41,57 @@
         </div>
 
         <!-- ── weight log card ── -->
-        <div class="card log-card">
-            <div class="card-header">
-                <h3>Weight Log</h3>
+        <div class="log-card">
+
+            <!-- LEFT / WHITE -->
+            <div class="log-controls">
+                <div class="card-header">
+                    <h3>Weight Log</h3>
+                </div>
+
+                <form class="btn-row" id="add-form">
+                    <button class="btn btn-add" type="submit">
+                        Add +
+                    </button>
+
+                    <input placeholder="current weight" step="0.01" type="number" name="add-weight" id="add-weight">
+                </form>
             </div>
 
-            <form class="btn-row" id="add-form">
-                <button class="btn btn-add" type="submit">Add +</button>
-                <input placeholder="current weight" step="0.01" type="number" name="add-weight" id="add-weight">
-            </form>
+            <!-- RIGHT / BLACK -->
+            <div class="log-list-wrap">
 
-            <div class="log-list" id="logList">
-                <% if (logs.length === 0) { %>
-                <div class="log-empty" id="logEmpty">
-                    No entries yet — add your first weight above.
+                <canvas class="shader-bg" id="log-bg"></canvas>
+
+                <div class="log-list" id="logList">
+
+                    <% if (logs.length === 0) { %>
+
+                    <div class="log-empty" id="logEmpty">
+                        No entries yet — add your first weight above.
+                    </div>
+
+                    <% } else { %>
+
+                    <% logs.forEach(log => { %>
+
+                    <div class="log-item">
+                        <span><%= log.weight %> lbs</span>
+
+                        <span>
+                            <%= new Date(log.logged_at).toLocaleDateString() %>
+                        </span>
+
+                        <a href="/user/<%= user.name %>/delete/<%= log.id %>">
+                            <%- include("../public/icons/trash.svg") %>
+                        </a>
+                    </div>
+
+                    <% }) %>
+
+                    <% } %>
+
                 </div>
-                <% } else { %>
-                <% logs.forEach(log => { %>
-                <div class="log-item">
-                    <span><%= log.weight %> lbs</span>
-                    <span><%= new Date(log.logged_at).toLocaleDateString() %></span>
-                    <a
-                        href="/user/<%= user.name %>/delete/<%= log.id %>"><%- include("../public/icons/trash.svg") %></a>
-                </div>
-                <% }) %>
-                <% } %>
             </div>
         </div>
 
@@ -117,14 +143,18 @@
                 </div>
             </div>
         </div>
-        <input type="checkbox" name="sms-consent" id="sms-consent" required>
-        <label id="sms-consent-label" for="sms-consent">
-            I agree to receive SMS notifications from WeighJazi
-        </label>
+        <div class="consent-wrap">
+            <input type="checkbox" name="sms-consent" id="sms-consent" required>
+            <label id="sms-consent-label" for="sms-consent">
+                I agree to receive SMS notifications from WeighJazi
+            </label>
+        </div>
+
     </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="/weightForm.js"></script>
     <script src="/shader2.js"></script>
 </body>

@@ -1,9 +1,10 @@
 const canvas = document.getElementById("profile-bg");
 const gl = canvas.getContext("webgl");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = canvas.clientWidth * 0.5;
+canvas.height = canvas.clientHeight * 0.5;
 
+gl.viewport(0, 0, canvas.width, canvas.height);
 const vertexShaderSource = `
 attribute vec2 position;
 
