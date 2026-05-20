@@ -86,8 +86,6 @@ function updateLogList(user, logs) {
 
 function createLogItem(user, log) {
 
-
-
     const item = document.createElement('div');
     item.className = 'log-item';
 
