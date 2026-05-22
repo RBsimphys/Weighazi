@@ -2,7 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const queries = require('./db/queries.js');
 const app = express();
-const port = 8000;
+const port = 8080;
 
 
 app.set('view engine', 'ejs');
@@ -26,8 +26,6 @@ app.get('/user/:id', async (req, res) => {
     const id = req.params.id;
     const logs = await queries.getWeightList(id);
     const user = await queries.getUser(id);
-    console.log(logs);
-    console.log(user);
     res.render('userData', {
         user,
         logs
