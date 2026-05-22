@@ -124,13 +124,19 @@ async function getWeightList(id) {
 }
 
 async function deleteWeight(userid, weightid) {
-    const { rows } = await pool.query(
-        `DELETE FROM weightlogs
-         WHERE id = $1 AND user_id = $2`,
+    const result = await pool.query(
+        `
+        WITH log_count AS (
+            SELECT COUNT(*) AS cnt FROM weightlogs WHERE user_id = $2
+        )
+        DELETE FROM weightlogs
+        WHERE id = $1
+        AND user_id = $2
+        AND (SELECT cnt FROM log_count) > 1`,
         [weightid, userid]
     );
+    return result.rowCount > 0; // true if deleted, false if it was the first log
 }
-
 
 
 module.exports = {

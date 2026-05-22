@@ -370,7 +370,7 @@ body {
 .log-controls {
     background: white;
     padding-bottom: 12px;
-    max-height: 100px;
+    max-height: 120px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -407,12 +407,13 @@ body {
 .btn-row {
     display: flex;
     gap: 8px;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
+    align-items: left;
+
 }
 
 #add-weight {
-    font-size: 13px;
+    font-size: 18px;
     margin: 10px;
     padding: 10px;
     border: solid black;
@@ -423,7 +424,7 @@ body {
 
 .btn {
     font-family: 'ubuntu-bold';
-    font-size: 13px;
+    font-size: 18px;
     margin: 10px;
     padding: 10px;
     border: none;
@@ -724,7 +725,7 @@ body {
 
     color: #d4d4d4;
 
-    font-size: 15px;
+    font-size: 20px;
 }
 
 

@@ -10,10 +10,6 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-
-const userArray = [{ name: 'Rami', current_weight: 14, goalweight: 14, progress: 15, height: 1, age: 1, id: 1 }];
-
-const user = userArray[0];
 // main page 
 app.get('/', async (req, res) => {
     const userArray = await queries.getUserArray();
@@ -36,10 +32,12 @@ app.get('/user/:id', async (req, res) => {
 app.delete('/user/delete/:id/:weightid', async (req, res) => {
     const { id, weightid } = req.params;
     const deleted = await queries.deleteWeight(id, weightid);
-
-    res.json({ success: true, deleted });
+    if (deleted) {
+        res.json({ success: true, deleted });
+    } else {
+        res.json({ success: false, reason: 'Cannot delete the first log' });
+    }
 });
-
 
 app.get('/user/:id/logs', async (req, res) => {
     const id = req.params.id;
