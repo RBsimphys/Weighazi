@@ -67,17 +67,10 @@ if (canvas) {
 
         void main() {
             vec2 uv = gl_FragCoord.xy / resolution.xy;
-            vec2 crt = crtDistort(uv);
+        vec2 shaderUV = (uv * resolution.xy - 0.5 * resolution.xy) / resolution.y;
+vec4 col = originalShader(shaderUV);
 
-            if (crt.x < 0.0 || crt.x > 1.0 || crt.y < 0.0 || crt.y > 1.0) {
-                gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-                return;
-            }
-
-            vec2 shaderUV = (crt * resolution.xy - 0.5 * resolution.xy) / resolution.y;
-            vec4 col = originalShader(shaderUV);
-
-            float scanline = sin(crt.y * resolution.y * 3.14159);
+float scanline = sin(uv.y * resolution.y * 3.14159);
             scanline = pow(abs(scanline), 0.4) * sign(scanline) * 0.5 + 0.5;
             col.rgb *= mix(0.75, 1.0, scanline);
 
@@ -89,8 +82,7 @@ if (canvas) {
             );
 
             col.rgb *= mix(vec3(1.0), mask * 1.3, 0.2);
-
-            vec2 vig = crt - 0.5;
+vec2 vig = uv - 0.5;
             float vignette = 1.0 - dot(vig, vig) * 1.8;
             col.rgb *= clamp(vignette, 0.0, 1.0);
 
