@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sign up</title>
+    <style>
+        #signup-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            display: block;
+
+            transform: scaleY(0) scaleX(0);
+            filter: brightness(0);
+        }
+
+        /* TV ON */
+
+        @keyframes tvOn {
+            0% {
+                transform: scaleY(0) scaleX(0);
+                filter: brightness(0);
+            }
+
+            18% {
+                transform: scaleY(0.015) scaleX(0.35);
+                filter: brightness(6);
+            }
+
+            42% {
+                transform: scaleY(0.015) scaleX(1.03);
+                filter: brightness(3);
+            }
+
+            70% {
+                transform: scaleY(1.02) scaleX(1);
+                filter: brightness(1.4);
+            }
+
+            100% {
+                transform: scaleY(1);
+                transform: scaleX(1);
+                filter: brightness(1);
+            }
+        }
+
+        #signup-bg.tv-on {
+            animation: tvOn 0.42s ease forwards;
+        }
+
+        @font-face {
+            font-family: 'monoton';
+            src: url('/fonts/monoton/Monoton-Regular.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'ubuntu-bold';
+            src: url('/fonts/ubuntu/ubuntu-font-family-0.80/Ubuntu-B.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'ubuntu-reg';
+            src: url('/fonts/ubuntu/ubuntu-font-family-0.80/Ubuntu-R.ttf') format('truetype');
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 14px;
+            background: #05050d;
+            font-family: 'ubuntu-reg', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        #bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            display: block;
+        }
+
+        h2 {
+            font-family: 'monoton';
+            font-size: 44px;
+            color: white;
+            text-align: center;
+            margin: 4px 0 10px;
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 14px rgba(236, 195, 30, 0.55);
+        }
+
+        form {
+            max-width: 390px;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 12px;
+            border: 1px solid rgba(236, 195, 30, 0.28);
+            box-shadow: 0 1px 40px rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+        }
+
+        label {
+            font-family: 'ubuntu-bold';
+            font-size: 11px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 5px;
+        }
+
+        input {
+            font-family: 'ubuntu-reg';
+            font-size: 14px;
+            padding: 7px 9px;
+            border: 1.5px solid #d8d8d8;
+            border-radius: 7px;
+            background: #fafafa;
+            color: #111;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #ecc31e;
+            box-shadow: 0 0 0 3px rgba(236, 195, 30, 0.18);
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        button[type="submit"] {
+            margin-top: 10px;
+            padding: 10px;
+            font-family: 'ubuntu-bold';
+            font-size: 16px;
+            background: #25ec1e;
+            color: #111;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 16px rgba(236, 195, 30, 0.35);
+        }
+
+        button[type="submit"]:hover {
+            opacity: 0.9;
+
+            background: #1aab15;
+        }
+
+        button[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        /* gender */
+        .gender-toggle {
+            display: flex;
+            gap: 7px;
+        }
+
+        .gender-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .gender-btn {
+            flex: 1;
+            height: 34px;
+            border: 1.5px solid #ddd;
+            border-radius: 7px;
+            background: #f8f8f8;
+            color: #444;
+            font-family: 'ubuntu-bold';
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gender-toggle input[type="radio"]:checked+.gender-btn {
+            background: #fff5cb;
+            border-color: #ecc31e;
+            color: #111;
+        }
+
+        /* activity */
+        .activity-scroll {
+            display: flex;
+            gap: 7px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .activity-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .act-chip {
+            flex-shrink: 0;
+            width: 76px;
+            height: 58px;
+            border-radius: 9px;
+            border: 1.5px solid #ddd;
+            background: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+        }
+
+        .act-chip:hover,
+        .act-chip.selected {
+            border-color: #ecc31e;
+            background: #fff5cb;
+        }
+
+        .act-num {
+            font-family: 'ubuntu-bold';
+            font-size: 20px;
+            color: #111;
+            line-height: 1;
+        }
+
+        .act-label {
+            font-family: 'ubuntu-reg';
+            font-size: 8px;
+            color: #777;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .act-chip.selected .act-num,
+        .act-chip.selected .act-label {
+            color: #b8960e;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            h2 {
+                font-size: 30px;
+            }
+
+            form {
+                max-width: 100%;
+                padding: 14px;
+            }
+        }
+
+        .consent-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+
+            margin-top: 8px;
+            padding: 12px 14px;
+
+            background: rgba(255, 255, 255, 0.05);
+
+            border: 1px solid rgba(236, 195, 30, 0.16);
+            border-radius: 10px;
+
+            backdrop-filter: blur(5px);
+        }
+
+        #sms-consent {
+            width: 16px;
+            height: 16px;
+
+            margin-top: 2px;
+
+            accent-color: #25ec1e;
+
+            cursor: pointer;
+
+            flex-shrink: 0;
+        }
+
+        #sms-consent-label {
+            margin: 0;
+
+            font-family: 'ubuntu-reg';
+
+            font-size: 12px;
+            line-height: 1.45;
+
+            color: #555;
+
+            text-transform: none;
+            letter-spacing: 0.02em;
+
+            cursor: pointer;
+        }
+
+        .consent-wrap:hover {
+            border-color: rgba(37, 236, 30, 0.28);
+        }
+
+        .phone-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .phone-code-wrap {
+            display: flex;
+            align-items: center;
+
+            min-width: 82px;
+
+            padding: 0 10px;
+
+            border: 1.5px solid #d8d8d8;
+            border-radius: 7px;
+
+            background: #fafafa;
+        }
+
+        .phone-plus {
+            font-family: 'ubuntu-bold';
+            font-size: 14px;
+            color: #666;
+
+            margin-right: 4px;
+        }
+
+        .phone-code {
+            width: 100%;
+
+            border: none !important;
+            background: transparent !important;
+
+            padding: 7px 0 !important;
+
+            box-shadow: none !important;
+        }
+
+        .phone-code:focus {
+            outline: none;
+        }
+
+        .phone-main {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="signup-bg"></canvas>
+    <h2>Sign Up</h2>
+    <form id="signUpForm" action="/signup" method="POST">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Alex Johnson" required>
+        <label>Phone Number</label>
+
+        <div class="phone-row">
+
+            <div class="phone-code-wrap">
+                <span class="phone-plus">+</span>
+
+                <input type="tel" id="countrycode" name="countrycode" class="phone-code" value="1" maxlength="3"
+                    required>
+            </div>
+
+            <input type="tel" id="phonenumbers" name="phonenumbers" class="phone-main" placeholder="817 555 1234"
+                maxlength="14" required>
+        </div>
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" min="10" max="100" required>
+
+        <label for="height">Height (cm)</label>
+        <input type="number" id="height" name="height" min="100" max="250" required>
+
+        <label for="startingweight">Starting Weight (lbs)</label>
+        <input type="number" id="startingweight" name="startingweight" min="30" max="300" required>
+
+        <label for="goalweight">Goal Weight (lbs)</label>
+        <input type="number" id="goalweight" name="goalweight" min="30" max="300" required>
+
+        <label>Gender</label>
+        <div class="gender-toggle">
+            <input type="radio" id="g-male" name="gender" value="Male" required>
+            <label for="g-male" class="gender-btn">Male</label>
+
+            <input type="radio" id="g-female" name="gender" value="Female">
+            <label for="g-female" class="gender-btn">Female</label>
+        </div>
+
+        <label for="activitylevel">Activity Level</label>
+        <input type="hidden" id="activitylevel" name="activitylevel" required>
+        <div class="activity-scroll">
+            <div class="act-chip" data-val="0" onclick="selectAct(this, 0)">
+                <span class="act-num">0</span>
+                <span class="act-label">Sedentary</span>
+            </div>
+            <div class="act-chip" data-val="1" onclick="selectAct(this, 1)">
+                <span class="act-num">1</span>
+                <span class="act-label">Lightly active</span>
+            </div>
+            <div class="act-chip" data-val="2" onclick="selectAct(this, 2)">
+                <span class="act-num">2</span>
+                <span class="act-label">Moderately active</span>
+            </div>
+            <div class="act-chip" data-val="3" onclick="selectAct(this, 3)">
+                <span class="act-num">3</span>
+                <span class="act-label">Very active</span>
+            </div>
+        </div>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" minlength="8" required>
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" minlength="8" required>
+        <div class="consent-wrap">
+            <input type="checkbox" id="sms-consent" name="smsConsent" required>
+
+            <label id="sms-consent-label" for="sms-consent">
+                I agree to receive daily SMS reminders to text my weight to Weighjazi.
+            </label>
+        </div>
+        <button type="submit">Create Account</button>
+    </form>
+    <script src="/shader3.js"></script>
+    <script src="/signup.js"></script>
+</body>
+
+</html>

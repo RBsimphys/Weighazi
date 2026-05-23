@@ -62,6 +62,27 @@ app.post('/user/:id', async (req, res) => {
 });
 
 
+// sign up page
+app.get('/signup', async (req, res) => {
+    res.render('signUp');
+});
+
+
+app.post("/signup", async (req, res) => {
+    try {
+
+        const newUser = await queries.createUser(req.body);
+        const initialWeightLog = await queries.createWeightLog(newUser.id, newUser.startingweight);
+        const userArray = await queries.getUserArray();
+        res.render('index', { userArray });
+
+    } catch (err) {
+        if (err.code === "23505") {
+            return res.status(400).send("Username already exists");
+        }
+        res.status(500).send(err);
+    }
+});
 
 // lisetning
 app.listen(port, () => {

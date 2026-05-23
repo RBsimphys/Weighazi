@@ -50,7 +50,8 @@ async function getUserArray() {
                     )
             END AS progress
         FROM userdb u
-        LEFT JOIN latest l ON u.id = l.user_id;
+        LEFT JOIN latest l ON u.id = l.user_id
+        ORDER BY progress DESC;
     `);
     return rows;
 };
@@ -92,21 +93,18 @@ WHERE userdb.id = $1;
 
 
 }
-
 async function addWeight(userId, weight) {
-
-    console.log(userId, weight);
     const { rows } = await pool.query(
         `
         INSERT INTO weightlogs (user_id, weight, logged_at)
-        VALUES ($1, $2, NOW());
+        VALUES ($1, $2, NOW())
+        RETURNING *;
         `,
-        [userId, weight]
+        [userId, Number(weight)]
     );
 
     return rows[0];
 }
-
 
 async function getWeightList(id) {
 
@@ -139,11 +137,88 @@ async function deleteWeight(userid, weightid) {
 }
 
 
+async function createUser(userData) {
+
+    const fullPhone =
+        `+${userData.countrycode}${userData.phonenumbers.replace(/\D/g, "")}`;
+
+    const query = `
+        INSERT INTO userdb (
+            name,
+            height,
+            age,
+            goalweight,
+            activitylevel,
+            phonenumbers,
+            startingweight,
+            gender,
+            password
+        )
+        VALUES (
+            $1,$2,$3,$4,$5,$6,$7,$8,$9
+        )
+        RETURNING *;
+    `;
+
+
+
+    const values = [
+        userData.name,
+        Number(userData.height),
+        Number(userData.age),
+        Number(userData.goalweight),
+        Number(userData.activitylevel),
+        fullPhone,
+        Number(userData.startingweight),
+        userData.gender, 
+        userData.password
+    ];
+
+    try {
+
+        const result = await pool.query(query, values);
+
+        return result.rows[0];
+
+    } catch (err) {
+
+        console.error("createUser error:", err);
+
+        throw err;
+    }
+}
+
+
+async function createWeightLog(id, startingweight) {
+    const query = `
+        INSERT INTO weightlogs (
+            user_id,
+            weight
+        )
+        VALUES (
+            $1,$2
+        )
+        RETURNING *;
+    `;
+
+
+    try {
+
+        const result = await pool.query(query, [id, startingweight]);
+        return result.rows[0];
+
+    } catch (err) {
+        console.error("createUser error:", err);
+        throw err;
+    }
+}
 module.exports = {
     getStartingWeight,
     getUserArray,
     getUser,
     addWeight,
     getWeightList,
-    deleteWeight
+    deleteWeight,
+    createUser,
+    createWeightLog
 };
