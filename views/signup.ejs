@@ -360,11 +360,46 @@
         .phone-main {
             flex: 1;
         }
+
+        a {
+            all: unset;
+            cursor: pointer;
+            /* Recommended to keep it feeling like a link */
+        }
+
+          #goback {
+        position: fixed;
+
+        top: 18px;
+        left: 18px;
+
+        z-index: 50;
+
+        padding: 5px 20px;
+
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        background: rgba(0, 0, 0, 0.34);
+
+        border: 1px solid rgba(236, 195, 30, 0.16);
+        border-radius: 12px;
+
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        font-size: 40px;
+        color: #aaa;
+        box-shadow:
+            0 0 20px rgba(236, 195, 30, 0.08),
+            inset 0 0 12px rgba(255, 255, 255, 0.02);
+    }
     </style>
 </head>
 
 <body>
     <canvas id="signup-bg"></canvas>
+    <div id="goback"><a href="/">↩</a></div>
     <h2>Sign Up</h2>
     <form id="signUpForm" action="/signup" method="POST">
         <label for="name">Name</label>

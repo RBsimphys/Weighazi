@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+
+    <style>
+        @font-face {
+            font-family: 'monoton';
+            src: url('/fonts/monoton/Monoton-Regular.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'ubuntu-bold';
+            src: url('/fonts/ubuntu/ubuntu-font-family-0.80/Ubuntu-B.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'ubuntu-reg';
+            src: url('/fonts/ubuntu/ubuntu-font-family-0.80/Ubuntu-R.ttf') format('truetype');
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 14px;
+            background: #05050d;
+            font-family: 'ubuntu-reg', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        #login-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            display: block;
+
+            transform: scaleY(0) scaleX(0);
+            filter: brightness(0);
+        }
+
+        @keyframes tvOn {
+            0% {
+                transform: scaleY(0) scaleX(0);
+                filter: brightness(0);
+            }
+
+            18% {
+                transform: scaleY(0.015) scaleX(0.35);
+                filter: brightness(6);
+            }
+
+            42% {
+                transform: scaleY(0.015) scaleX(1.03);
+                filter: brightness(3);
+            }
+
+            70% {
+                transform: scaleY(1.02) scaleX(1);
+                filter: brightness(1.4);
+            }
+
+            100% {
+                transform: scaleY(1) scaleX(1);
+                filter: brightness(1);
+            }
+        }
+
+        #login-bg.tv-on {
+            animation: tvOn 0.42s ease forwards;
+        }
+
+        h2 {
+            font-family: 'monoton';
+            font-size: 44px;
+            color: white;
+            text-align: center;
+            margin: 70px 0 10px;
+            letter-spacing: 0.08em;
+        }
+
+        form {
+            max-width: 390px;
+            margin: 0 auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.28);
+            box-shadow: 0 1px 40px rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+        }
+
+        label {
+            font-family: 'ubuntu-bold';
+            font-size: 11px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 5px;
+        }
+
+        input {
+            font-family: 'ubuntu-reg';
+            font-size: 14px;
+            padding: 7px 9px;
+            border: 1.5px solid #d8d8d8;
+            border-radius: 7px;
+            background: #fafafa;
+            color: #111;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #ecc31e;
+            box-shadow: 0 0 0 3px rgba(236, 195, 30, 0.18);
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        button[type="submit"] {
+            margin-top: 10px;
+            padding: 10px;
+            font-family: 'ubuntu-bold';
+            font-size: 16px;
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 16px rgba(236, 195, 30, 0.35);
+        }
+
+        button[type="submit"]:hover {
+            opacity: 0.9;
+            background: #6c726c;
+        }
+
+        button[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        a {
+            all: unset;
+            cursor: pointer;
+        }
+
+        #goback {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 50;
+
+            padding: 5px 20px;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            background: rgba(0, 0, 0, 0.34);
+            border: 1px solid rgba(236, 195, 30, 0.16);
+            border-radius: 12px;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+
+            font-size: 40px;
+            color: #aaa;
+
+            box-shadow:
+                0 0 20px rgba(236, 195, 30, 0.08),
+                inset 0 0 12px rgba(255, 255, 255, 0.02);
+        }
+
+        .signup-link {
+            margin-top: 10px;
+            text-align: center;
+            font-family: 'ubuntu-reg';
+            font-size: 13px;
+            color: #555;
+        }
+
+        .signup-link a {
+            font-family: 'ubuntu-bold';
+            color: #1aab15;
+        }
+
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 30px;
+                margin-top: 75px;
+            }
+
+            form {
+                max-width: 100%;
+                padding: 14px;
+            }
+
+            #goback {
+                top: 12px;
+                left: 12px;
+                font-size: 30px;
+                padding: 4px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="login-bg"></canvas>
+
+    <div id="goback">
+        <a href="/">↩</a>
+    </div>
+
+    <h2>L O G I N</h2>
+
+    <form action="/login" method="POST">
+        <label for="name">Username</label>
+        <input type="text" id="name" name="name" placeholder="Alex Johnson" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" minlength="8" placeholder="****" required>
+
+        <button type="submit">Login</button>
+
+        <p class="signup-link">
+            No account? <a href="/signup">Create one</a>
+        </p>
+    </form>
+
+    <script src="/shader4.js"></script>
+</body>
+</html>

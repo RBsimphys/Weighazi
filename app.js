@@ -64,7 +64,7 @@ app.post('/user/:id', async (req, res) => {
 
 // sign up page
 app.get('/signup', async (req, res) => {
-    res.render('signUp');
+    res.render('signup');
 });
 
 
@@ -82,6 +82,13 @@ app.post("/signup", async (req, res) => {
         }
         res.status(500).send(err);
     }
+});
+
+
+// login page
+
+app.get('/login', (req,res)=>{
+    res.render('login');
 });
 
 // lisetning
