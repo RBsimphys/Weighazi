@@ -965,3 +965,134 @@ body {
 .user-row:hover {
     cursor: pointer;
 }
+
+
+/* logged out button */
+
+#log-out {
+    position: fixed;
+
+    top: 18px;
+    left: 18px;
+
+    z-index: 50;
+
+    padding: 7px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background: rgba(0, 0, 0, 0.34);
+
+    border: 1px solid rgba(236, 195, 30, 0.16);
+    border-radius: 12px;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    box-shadow:
+        0 0 20px rgba(236, 195, 30, 0.08),
+        inset 0 0 12px rgba(255, 255, 255, 0.02);
+}
+
+#log-out button {
+    padding: 9px 14px;
+
+    font-family: 'ubuntu-bold';
+    font-size: 12px;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    background: transparent;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.1s ease,
+        box-shadow 0.18s ease;
+}
+
+#log-out button:hover {
+    background: rgba(236, 195, 30, 0.12);
+
+    color: white;
+
+    box-shadow:
+        0 0 14px rgba(236, 195, 30, 0.18),
+        inset 0 0 10px rgba(236, 195, 30, 0.06);
+}
+
+#log-out button:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 600px) {
+
+    #main-title {
+        padding-top: 82px;
+
+        font-size: 30px;
+    }
+
+    #log-out {
+        top: 10px;
+        left: 10px;
+
+        padding: 4px;
+
+        border-radius: 10px;
+    }
+
+    #log-out button {
+        padding: 7px 9px;
+
+        font-size: 10px;
+
+        letter-spacing: 0.04em;
+
+        border-radius: 7px;
+    }
+}
+
+@media (max-width: 360px) {
+
+    #log-out {
+        top: 8px;
+        left: 8px;
+
+        padding: 3px;
+    }
+
+    #log-out button {
+        padding: 6px 7px;
+
+        font-size: 9px;
+    }
+}
+
+.locked-form input {
+    background: #2a2a2a;
+
+    color: #777;
+
+    border-color: #3a3a3a;
+
+    cursor: not-allowed;
+
+    opacity: 0.7;
+}
+
+.locked-form input::placeholder {
+    color: #666;
+}

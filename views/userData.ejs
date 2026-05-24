@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <% const isOwner = Number(sessionUserId) === Number(user.id); %>
     <h2 class="title" id="homeBtn" href="/">weighjazi</h2>
     <div class="user-container">
 
@@ -48,21 +49,22 @@
                     <h3>Log Weight</h3>
                 </div>
 
-                <form class="btn-row" id="add-form">
-                    <button class="btn btn-add" type="submit">
+                <form class="btn-row <%= !isOwner ? 'locked-form' : '' %>" id="add-form">
+
+                    <button class="btn btn-add" type="submit" <%= !isOwner ? 'disabled' : '' %>>
                         Add +
                     </button>
 
-                    <input placeholder="current weight" step="0.01" type="number" name="add-weight" id="add-weight">
+                    <input placeholder="current weight" step="0.01" type="number" name="add-weight" id="add-weight"
+                        <%= !isOwner ? 'disabled' : '' %>>
+
                 </form>
             </div>
 
             <!-- RIGHT / BLACK -->
             <div class="log-list-wrap">
 
-                <div class="log-list" id="logList">
-                    <div class="log-list" id="logList"></div>
-                </div>
+                <div class="log-list" id="logList"></div>
 
             </div>
         </div>

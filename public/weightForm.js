@@ -140,8 +140,11 @@ async function deleteWeight(userId, logId) {
 }
 
 async function renderChart() {
-
     const res = await fetch(`/user/${userId}/logs`);
+
+    if (!res.ok) {
+        return;
+    }
 
     const logs = await res.json();
 
@@ -203,20 +206,27 @@ function updateChart(logs) {
         }
     });
 }
-
 async function init() {
-
     const res = await fetch(`/user/${userId}/logs`);
+
+    if (!res.ok) {
+        console.log("Not allowed to load logs");
+        return;
+    }
 
     const logs = await res.json();
 
     const userRes = await fetch(`/api/user/${userId}`);
 
+    if (!userRes.ok) {
+        console.log("Not allowed to load user");
+        return;
+    }
+
     const user = await userRes.json();
 
     updateUI(user, logs);
 }
-
 
 async function refreshPageData() {
 
