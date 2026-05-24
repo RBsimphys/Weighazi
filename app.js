@@ -24,8 +24,6 @@ app.use(
     })
 )
 
-
-
 // main page 
 app.get('/', async (req, res) => {
 
