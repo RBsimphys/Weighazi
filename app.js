@@ -5,6 +5,8 @@ const app = express();
 const port = 8080;
 
 
+const bcrypt = require('bcrypt');
+
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.static('public'));
@@ -70,27 +72,50 @@ app.get('/signup', async (req, res) => {
 
 app.post("/signup", async (req, res) => {
     try {
-
-        const newUser = await queries.createUser(req.body);
-        const initialWeightLog = await queries.createWeightLog(newUser.id, newUser.startingweight);
+        const { password } = req.body;
+        const hashpassword = await bcrypt.hash(password, 10);
+        const newUser = await queries.createUser(req.body, hashpassword);
+        await queries.createWeightLog(newUser.id, newUser.startingweight);
         const userArray = await queries.getUserArray();
-        res.render('index', { userArray });
-
+        res.render("index", { userArray });
     } catch (err) {
         if (err.code === "23505") {
             return res.status(400).send("Username already exists");
         }
-        res.status(500).send(err);
+
+        res.status(500).send("Something went wrong");
     }
 });
 
 
 // login page
-
-app.get('/login', (req,res)=>{
+app.get('/login', async (req, res) => {
     res.render('login');
 });
 
+app.post('/login', async (req, res) => {
+    try {
+        const { name, password } = req.body;
+
+        const user = await queries.findUserName(name);
+
+        if (!user) {
+            return res.status(400).json({ error: 'Invalid username or password' });
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+
+        if (!match) {
+            return res.status(400).json({ error: 'Invalid username or password' });
+        }
+
+        res.status(200).json({ message: 'Login successful', userId: user.id });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error logging in' });
+    }
+});
 // lisetning
 app.listen(port, () => {
     console.log(`listening on port ${port}`);

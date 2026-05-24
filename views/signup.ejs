@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sign up</title>
+    <title>weighjazi: sign up</title>
     <style>
         #signup-bg {
             position: fixed;
@@ -17,6 +17,7 @@
             transform: scaleY(0) scaleX(0);
             filter: brightness(0);
         }
+
 
         /* TV ON */
 
@@ -173,7 +174,10 @@
         }
 
         .gender-toggle input[type="radio"] {
-            display: none;
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+
         }
 
         .gender-btn {
@@ -367,43 +371,96 @@
             /* Recommended to keep it feeling like a link */
         }
 
-          #goback {
-        position: fixed;
+        .signup-link {
+            margin-top: 10px;
+            text-align: center;
+            font-family: 'ubuntu-reg';
+            font-size: 13px;
+            color: #555;
+        }
 
-        top: 18px;
-        left: 18px;
+        .signup-link a {
+            font-family: 'ubuntu-bold';
+            color: #1aab15;
+        }
 
-        z-index: 50;
+        #goback {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 50;
 
-        padding: 5px 20px;
+            padding: 10px;
 
-        display: flex;
-        align-items: center;
-        gap: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
 
-        background: rgba(0, 0, 0, 0.34);
+            background: rgba(0, 0, 0, 0.34);
+            border: 1px solid rgba(255, 255, 255, 0);
+            border-radius: 12px;
 
-        border: 1px solid rgba(236, 195, 30, 0.16);
-        border-radius: 12px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
 
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        font-size: 40px;
-        color: #aaa;
-        box-shadow:
-            0 0 20px rgba(236, 195, 30, 0.08),
-            inset 0 0 12px rgba(255, 255, 255, 0.02);
-    }
+            font-size: 30px;
+            color: #aaa;
+        }
+
+
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 30px;
+                margin-top: 75px;
+            }
+
+            form {
+                max-width: 100%;
+                padding: 14px;
+            }
+
+            #goback {
+                top: 10px;
+                left: 10px;
+
+                padding: 4px 14px;
+
+                font-size: 28px;
+
+                border-radius: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            #goback {
+                padding: 3px 12px;
+                font-size: 24px;
+            }
+        }
+
+        #goback {
+            transition:
+                opacity 0.25s ease,
+                transform 0.25s ease;
+        }
+
+        #goback.hide {
+            opacity: 0;
+
+            transform: translateY(-14px);
+
+            pointer-events: none;
+        }
     </style>
 </head>
 
 <body>
     <canvas id="signup-bg"></canvas>
     <div id="goback"><a href="/">↩</a></div>
-    <h2>Sign Up</h2>
+    <h2>SIGN UP</h2>
     <form id="signUpForm" action="/signup" method="POST">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" placeholder="Alex Johnson" required>
+        <label for="name">USER NAME</label>
+        <input type="text" id="name" name="name" placeholder="Alex" required>
         <label>Phone Number</label>
 
         <div class="phone-row">
@@ -456,25 +513,22 @@
             </div>
             <div class="act-chip" data-val="3" onclick="selectAct(this, 3)">
                 <span class="act-num">3</span>
-                <span class="act-label">Very active</span>
+                    <span class="act-label">Very active</span>
+                </div>
             </div>
-        </div>
+            <label for="password">4-Digit PIN</label>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" minlength="8" required>
-
-        <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" minlength="8" required>
-        <div class="consent-wrap">
-            <input type="checkbox" id="sms-consent" name="smsConsent" required>
-
-            <label id="sms-consent-label" for="sms-consent">
-                I agree to receive daily SMS reminders to text my weight to Weighjazi.
-            </label>
-        </div>
-        <button type="submit">Create Account</button>
-    </form>
-    <script src="/shader3.js"></script>
+            <input type="password" id="password" name="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4"
+                maxlength="4" placeholder="••••" required>
+            <div class="consent-wrap">
+                <input type="checkbox" id="sms-consent" name="smsConsent" value="false">
+                <label id="sms-consent-label" for="sms-consent">
+                    I agree to receive daily SMS reminders to text my weight to Weighjazi.
+                </label>
+            </div>
+            <button type="submit">Create Account</button>
+        </form>
+    <script src="/shaders/shader3.js"></script>
     <script src="/signup.js"></script>
 </body>
 

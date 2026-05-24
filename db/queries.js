@@ -137,7 +137,7 @@ async function deleteWeight(userid, weightid) {
 }
 
 
-async function createUser(userData) {
+async function createUser(userData, hashpassword) {
 
     const fullPhone =
         `+${userData.countrycode}${userData.phonenumbers.replace(/\D/g, "")}`;
@@ -152,10 +152,11 @@ async function createUser(userData) {
             phonenumbers,
             startingweight,
             gender,
-            password
+            password, 
+            smsConsent
         )
         VALUES (
-            $1,$2,$3,$4,$5,$6,$7,$8,$9
+            $1,$2,$3,$4,$5,$6,$7,$8,$9, $10
         )
         RETURNING *;
     `;
@@ -170,8 +171,9 @@ async function createUser(userData) {
         Number(userData.activitylevel),
         fullPhone,
         Number(userData.startingweight),
-        userData.gender, 
-        userData.password
+        userData.gender,
+        hashpassword,
+        userData.smsConsent
     ];
 
     try {
@@ -212,6 +214,28 @@ async function createWeightLog(id, startingweight) {
         throw err;
     }
 }
+
+
+
+async function findUserName(name) {
+    try {
+        const { rows } = await pool.query(
+            `
+            SELECT *
+            FROM userdb
+            WHERE LOWER(name) = LOWER($1)
+            `,
+            [name.trim()]
+        );
+
+        return rows[0] || null;
+
+    } catch (err) {
+        console.error("findUserName error:", err);
+        throw err;
+    }
+}
+
 module.exports = {
     getStartingWeight,
     getUserArray,
@@ -220,5 +244,6 @@ module.exports = {
     getWeightList,
     deleteWeight,
     createUser,
-    createWeightLog
+    createWeightLog,
+    findUserName
 };

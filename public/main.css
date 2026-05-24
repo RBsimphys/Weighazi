@@ -1,6 +1,6 @@
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
 
 
@@ -915,54 +915,53 @@ body {
 }
 
 @media (max-width: 600px) {
+
+   #main-title {
+        padding-top: 82px;
+
+        font-size: 30px;
+    }
+
     #user-authentication {
         top: 10px;
         left: 10px;
 
-        padding: 5px;
-        gap: 5px;
+        padding: 4px;
+        gap: 4px;
+
+        border-radius: 10px;
     }
 
-    #user-authentication span {
-        padding: 8px 10px;
+    #user-authentication a {
+        padding: 7px 9px;
+
         font-size: 10px;
+        letter-spacing: 0.04em;
+
+        border-radius: 7px;
     }
 }
 
+@media (max-width: 360px) {
+    #user-authentication {
+        top: 8px;
+        left: 8px;
 
-#homeBtn:hover{
+        padding: 3px;
+        gap: 3px;
+    }
+
+    #user-authentication a {
+        padding: 6px 7px;
+
+        font-size: 9px;
+    }
+}
+
+#homeBtn:hover {
     cursor: pointer;
 }
 
-.user-row:hover{
+.user-row:hover {
     cursor: pointer;
 }
-
-
-        #goback {
-            position: fixed;
-
-            top: 18px;
-            left: 18px;
-
-            z-index: 50;
-
-            padding: 5px 20px;
-
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            background: rgba(0, 0, 0, 0.34);
-
-            border: 1px solid rgba(236, 195, 30, 0.16);
-            border-radius: 12px;
-
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            font-size: 40px;
-            color: #aaa;
-            box-shadow:
-                0 0 20px rgba(236, 195, 30, 0.08),
-                inset 0 0 12px rgba(255, 255, 255, 0.02);
-        }

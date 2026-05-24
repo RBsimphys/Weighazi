@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>weighjazi:login</title>
 
     <style>
         @font-face {
@@ -157,31 +158,42 @@
             cursor: pointer;
         }
 
+
+        .signup-link {
+            margin-top: 10px;
+            text-align: center;
+            font-family: 'ubuntu-reg';
+            font-size: 13px;
+            color: #555;
+        }
+
+        .signup-link a {
+            font-family: 'ubuntu-bold';
+            color: #1aab15;
+        }
+
+
         #goback {
             position: fixed;
             top: 18px;
             left: 18px;
             z-index: 50;
 
-            padding: 5px 20px;
+            padding: 10px;
 
             display: flex;
             align-items: center;
             gap: 8px;
 
             background: rgba(0, 0, 0, 0.34);
-            border: 1px solid rgba(236, 195, 30, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0);
             border-radius: 12px;
 
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
 
-            font-size: 40px;
+            font-size: 30px;
             color: #aaa;
-
-            box-shadow:
-                0 0 20px rgba(236, 195, 30, 0.08),
-                inset 0 0 12px rgba(255, 255, 255, 0.02);
         }
 
         .signup-link {
@@ -209,11 +221,36 @@
             }
 
             #goback {
-                top: 12px;
-                left: 12px;
-                font-size: 30px;
-                padding: 4px 16px;
+                top: 10px;
+                left: 10px;
+
+                padding: 4px 14px;
+
+                font-size: 28px;
+
+                border-radius: 10px;
             }
+        }
+
+        @media (max-width: 360px) {
+            #goback {
+                padding: 3px 12px;
+                font-size: 24px;
+            }
+        }
+
+        #goback {
+            transition:
+                opacity 0.25s ease,
+                transform 0.25s ease;
+        }
+
+        #goback.hide {
+            opacity: 0;
+
+            transform: translateY(-14px);
+
+            pointer-events: none;
         }
     </style>
 </head>
@@ -225,14 +262,14 @@
         <a href="/">↩</a>
     </div>
 
-    <h2>L O G I N</h2>
+    <h2>LOG IN</h2>
 
     <form action="/login" method="POST">
         <label for="name">Username</label>
         <input type="text" id="name" name="name" placeholder="Alex Johnson" required>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" minlength="8" placeholder="****" required>
+        <label for="password">Pin</label>
+        <input type="password" id="password" name="password" minlength="4" maxlength="4" placeholder="****" required>
 
         <button type="submit">Login</button>
 
@@ -241,6 +278,7 @@
         </p>
     </form>
 
-    <script src="/shader4.js"></script>
+    <script src="/shaders/shader4.js"></script>
 </body>
+
 </html>
