@@ -26,7 +26,6 @@ app.use(
 
 // main page 
 app.get('/', async (req, res) => {
-
     req.session.visited = true;
     let user = null;
     if (req.session.user_id) {
@@ -36,7 +35,6 @@ app.get('/', async (req, res) => {
             name: dbUser.name
         };
     }
-
     const userArray = await queries.getUserArray();
 
     res.render('index', {
@@ -44,8 +42,6 @@ app.get('/', async (req, res) => {
         user
     });
 });
-
-
 
 app.delete('/user/delete/:id/:weightid', requireSameUser, async (req, res) => {
     const { id, weightid } = req.params;
@@ -100,25 +96,40 @@ app.get('/signup', async (req, res) => {
     res.render('signup');
 });
 
-
 app.post("/signup", async (req, res) => {
     try {
         const { password } = req.body;
-        const hashpassword = await bcrypt.hash(password, 10);
-        const newUser = await queries.createUser(req.body, hashpassword);
-        await queries.createWeightLog(newUser.id, newUser.startingweight);
-        const userArray = await queries.getUserArray();
 
-        res.redirect("/");
+        const hashpassword = await bcrypt.hash(password, 10);
+
+        const newUser = await queries.createUser(req.body, hashpassword);
+
+        await queries.createWeightLog(
+            newUser.id,
+            newUser.startingweight
+        );
+
+        req.session.user_id = newUser.id;
+
+        req.session.save((err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send("Session error");
+            }
+
+            res.redirect(`/user/${newUser.id}`);
+        });
+
     } catch (err) {
+        console.error(err);
+
         if (err.code === "23505") {
             return res.status(400).send("Username already exists");
         }
+
         res.status(500).send("Something went wrong");
     }
-
 });
-
 
 // login page
 app.get('/login', async (req, res) => {
