@@ -25,10 +25,38 @@
             <div class="top-right">
                 <!-- maintenance calories -->
                 <div class="maintenance-badge">
-                    <div class="cal-number" id="maintCals">—</div>
+                    <div class="cal-number" id="maintCals">
+                        <% 
+                    const weightKg = Number(user.currentweight) * 0.4535;
+                    const heightCm = Number(user.height);
+                    const age = Number(user.age);
+
+                    let BMR;
+
+                    if (user.gender === 'Male') {
+                        BMR = (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5;
+                    } else {
+                        BMR = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
+                    }
+
+                    const activityMultipliers = {
+                        0: 1.2,
+                        1: 1.375,
+                        2: 1.55,
+                        3: 1.725,
+                        4: 1.9
+                    };
+
+                    const activityMultiplier = activityMultipliers[user.activitylevel] || 1.2;
+
+                    const maintenanceCalories = BMR * activityMultiplier;
+                %>
+
+                        <%= Math.round(maintenanceCalories) %>
+                    </div>
+
                     <div class="cal-label">Maintenance kcal</div>
                 </div>
-
                 <!-- progress ring -->
                 <div class="ring-wrap">
                     <div class="circle-progress-lg" id="progressRing"
